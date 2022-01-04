@@ -1,0 +1,57 @@
+services:
+  - type: web
+    name: frontend
+    env: docker
+    scaling:
+      minInstances: 1
+      maxInstances: 3
+      targetCPUPercent: 85
+    healthCheckPath: /health
+    envVars:
+      - fromGroup: rails
+
+  - type: worker
+    name: sidekiq
+    env: docker
+    numInstances: 1
+    startCommand: foreman start -f Procfile.worker
+
+  - type: pserv
+    name: redis
+    env: docker
+    repo: https://github.com/render-examples/redis.git
+    disk:
+      name: redis-data
+      mountPath: /var/lib/redis
+
+databases:
+  - name: mastodon_db
+    databaseName: mastodon
+
+envVarGroups:
+  - name: rails
+    envVars:
+      - key: WEB_CONCURRENCY
+        value: 2
+      - key: OTP_SECRET
+        generateValue: true
+      - key: SECRET_KEY_BASE
+        generateValue: true
+      - key: VAPID_PUBLIC_KEY
+        sync: false
+      - key: VAPID_PRIVATE_KEY
+        sync: false
+      - key: DB_URL
+        fromDatabase:
+          name: mastodon_db
+          property: connectionString
+      - key: REDIS_HOST
+        fromService:
+          name: redis
+          type: pserv
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          name: redis
+          type: pserv
+          property: port
