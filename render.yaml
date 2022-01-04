@@ -9,6 +9,8 @@ services:
     healthCheckPath: /health
     envVars:
       - fromGroup: rails
+      - key: WEB_CONCURRENCY
+        value: 2
       - key: DB_URL
         fromDatabase:
           name: mastodon_db
@@ -61,8 +63,6 @@ databases:
 envVarGroups:
   - name: rails
     envVars:
-      - key: WEB_CONCURRENCY
-        value: 2
       - key: OTP_SECRET
         generateValue: true
       - key: SECRET_KEY_BASE
