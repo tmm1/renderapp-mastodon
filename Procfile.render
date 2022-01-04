@@ -1,0 +1,3 @@
+web: bundle exec puma -C config/puma.rb
+streaming: node ./streaming
+nginx: nginx -c /opt/mastodon/nginx.conf
