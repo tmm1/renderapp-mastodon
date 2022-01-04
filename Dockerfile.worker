@@ -1,0 +1,9 @@
+FROM tootsuite/mastodon:v3.4.4
+
+# copy over our extra stuff
+COPY --chown=mastodon:mastodon Procfile.worker /opt/mastodon
+
+# reset
+USER mastodon
+ENV RAILS_LOG_TO_STDOUT="enabled"
+ENTRYPOINT ["foreman", "start", "-f", "Procfile.worker"]

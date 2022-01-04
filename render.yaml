@@ -9,12 +9,42 @@ services:
     healthCheckPath: /health
     envVars:
       - fromGroup: rails
+      - key: DB_URL
+        fromDatabase:
+          name: mastodon_db
+          property: connectionString
+      - key: REDIS_HOST
+        fromService:
+          name: redis
+          type: pserv
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          name: redis
+          type: pserv
+          property: port
 
   - type: worker
     name: sidekiq
     env: docker
     numInstances: 1
-    startCommand: foreman start -f Procfile.worker
+    dockerfilePath: ./Dockerfile.worker
+    envVars:
+      - fromGroup: rails
+      - key: DB_URL
+        fromDatabase:
+          name: mastodon_db
+          property: connectionString
+      - key: REDIS_HOST
+        fromService:
+          name: redis
+          type: pserv
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          name: redis
+          type: pserv
+          property: port
 
   - type: pserv
     name: redis
@@ -41,17 +71,3 @@ envVarGroups:
         sync: false
       - key: VAPID_PRIVATE_KEY
         sync: false
-      - key: DB_URL
-        fromDatabase:
-          name: mastodon_db
-          property: connectionString
-      - key: REDIS_HOST
-        fromService:
-          name: redis
-          type: pserv
-          property: host
-      - key: REDIS_PORT
-        fromService:
-          name: redis
-          type: pserv
-          property: port
