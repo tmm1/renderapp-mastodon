@@ -15,16 +15,11 @@ services:
         fromDatabase:
           name: mastodon_db
           property: connectionString
-      - key: REDIS_HOST
+      - key: REDIS_URL
         fromService:
           name: redis
           type: pserv
-          property: host
-      - key: REDIS_PORT
-        fromService:
-          name: redis
-          type: pserv
-          property: port
+          property: connectionString
 
   - type: worker
     name: sidekiq
@@ -37,16 +32,11 @@ services:
         fromDatabase:
           name: mastodon_db
           property: connectionString
-      - key: REDIS_HOST
+      - key: REDIS_URL
         fromService:
           name: redis
           type: pserv
-          property: host
-      - key: REDIS_PORT
-        fromService:
-          name: redis
-          type: pserv
-          property: port
+          property: connectionString
 
   - type: pserv
     name: redis
